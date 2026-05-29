@@ -1,293 +1,511 @@
+html
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Refund Calculator</title>
-    <style>
-        body {
-            font-family: Arial, sans-serif;
-            max-width: 800px;
-            margin: 0 auto;
-            padding: 20px;
-        }
-        h1 {
-            text-align: center;
-            color: #333;
-        }
-        .message-box {
-            background-color: #f0f0f0;
-            padding: 10px;
-            margin-bottom: 20px;
-            border-radius: 5px;
-        }
-        table {
-            width: 100%;
-            border-collapse: collapse;
-            margin-bottom: 20px;
-        }
-        th, td {
-            border: 1px solid #ddd;
-            padding: 8px;
-            text-align: left;
-        }
-        th {
-            background-color: #f2f2f2;
-        }
-        .actions {
-            display: flex;
-            justify-content: space-between;
-            margin-bottom: 20px;
-        }
-        button {
-            padding: 8px 16px;
-            background-color: #4CAF50;
-            color: white;
-            border: none;
-            border-radius: 4px;
-            cursor: pointer;
-        }
-        button.delete {
-            background-color: #f44336;
-        }
-        button.add {
-            background-color: #2196F3;
-        }
-        button:disabled {
-            background-color: #cccccc;
-            cursor: not-allowed;
-        }
-        .total {
-            font-weight: bold;
-            font-size: 1.2em;
-            text-align: right;
-            margin-top: 10px;
-        }
-        #newArrearType, #newArrearValue {
-            padding: 8px;
-            margin-right: 10px;
-            border-radius: 4px;
-            border: 1px solid #ddd;
-        }
-        .add-arrears {
-            margin-bottom: 20px;
-        }
-        .status-message {
-            padding: 10px;
-            margin-top: 20px;
-            border-radius: 4px;
-            display: none;
-        }
-        .success {
-            background-color: #dff0d8;
-            color: #3c763d;
-            display: block;
-        }
-        .error {
-            background-color: #f2dede;
-            color: #a94442;
-            display: block;
-        }
-    </style>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+  <title>GITHURAI SALES · Daily Sales </title>
+  <!-- Bootstrap 5 + Icons + Fonts (modern UI/UX) -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
+  <!-- Font Awesome 6 (free icons) -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+  <!-- SheetJS (XLSX / Excel parser) -->
+  <script src="https://cdn.sheetjs.com/xlsx-0.20.2/package/dist/xlsx.full.min.js"></script>
+  <style>
+    * {
+      font-family: 'Inter', system-ui, -apple-system, 'Segoe UI', Roboto, Helvetica, sans-serif;
+    }
+    body {
+      background: linear-gradient(145deg, #eef2f7 0%, #d9e0e8 100%);
+      min-height: 100vh;
+      padding: 2rem 1rem;
+    }
+    .glass-card {
+      background: rgba(255, 255, 255, 0.96);
+      backdrop-filter: blur(0px);
+      border-radius: 2rem;
+      box-shadow: 0 20px 40px -12px rgba(0, 0, 0, 0.2), 0 1px 2px rgba(0,0,0,0.05);
+      transition: all 0.2s ease;
+    }
+    .header-grad {
+      background: linear-gradient(135deg, #1A3F2C, #0f2b1e);
+      border-radius: 1.5rem;
+      color: white;
+      padding: 1.5rem 2rem;
+      margin-bottom: 2rem;
+    }
+    .btn-primary-custom {
+      background: #1e4a3b;
+      border: none;
+      font-weight: 600;
+      padding: 0.75rem 2rem;
+      border-radius: 2rem;
+      transition: all 0.2s;
+      box-shadow: 0 4px 8px rgba(0,0,0,0.05);
+    }
+    .btn-primary-custom:hover {
+      background: #0e3a2c;
+      transform: translateY(-2px);
+      box-shadow: 0 12px 20px -10px rgba(30,74,59,0.4);
+    }
+    .btn-outline-custom {
+      border: 2px solid #1e4a3b;
+      color: #1e4a3b;
+      border-radius: 2rem;
+      font-weight: 600;
+      padding: 0.6rem 1.8rem;
+    }
+    .btn-outline-custom:hover {
+      background: #1e4a3b;
+      color: white;
+    }
+    .upload-area {
+      border: 2px dashed #9aaebf;
+      border-radius: 1.75rem;
+      background: #fefefe;
+      padding: 2rem;
+      text-align: center;
+      transition: all 0.2s;
+      cursor: pointer;
+    }
+    .upload-area:hover {
+      border-color: #1e4a3b;
+      background: #f8fbf9;
+    }
+    .table-container {
+      overflow-x: auto;
+      border-radius: 1.5rem;
+      background: white;
+      padding: 0.25rem;
+    }
+    .table-custom {
+      margin-bottom: 0;
+      border-collapse: separate;
+      border-spacing: 0;
+      width: 100%;
+    }
+    .table-custom thead th {
+      background: #f1f5f9;
+      color: #1e2a3a;
+      font-weight: 700;
+      font-size: 0.85rem;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      padding: 1rem 0.75rem;
+      border-bottom: 2px solid #cbd5e1;
+    }
+    .table-custom td {
+      padding: 0.9rem 0.75rem;
+      vertical-align: middle;
+      border-bottom: 1px solid #e9edf2;
+      font-weight: 500;
+      color: #1f2a3e;
+    }
+    .stats-footer {
+      background: #f8fafc;
+      border-radius: 1.25rem;
+      padding: 1rem 1.5rem;
+      margin-top: 1.5rem;
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: space-between;
+      align-items: center;
+      font-weight: 600;
+    }
+    .stat-badge {
+      background: white;
+      padding: 0.5rem 1.2rem;
+      border-radius: 2rem;
+      box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+      font-size: 0.9rem;
+    }
+    .badge-value {
+      font-size: 1.3rem;
+      font-weight: 800;
+      color: #1e4a3b;
+      margin-left: 0.5rem;
+    }
+    .alert-warning-custom {
+      background: #fff3e0;
+      border-left: 6px solid #e67e22;
+      border-radius: 1rem;
+    }
+    .footer-note {
+      font-size: 0.75rem;
+      color: #5c6f87;
+    }
+    h2 {
+      font-weight: 800;
+      letter-spacing: -0.3px;
+    }
+    @media (max-width: 768px) {
+      body {
+        padding: 1rem;
+      }
+      .stats-footer {
+        flex-direction: column;
+        gap: 10px;
+        align-items: stretch;
+        text-align: center;
+      }
+    }
+  </style>
 </head>
 <body>
-    <div class="message-box">
-        
 
-    <h1>COULD NOT LOAD DATA</h1>
+<div class="container-lg py-2">
+  <!-- App Header -->
+  <div class="header-grad d-flex justify-content-between align-items-center flex-wrap">
+    <div>
+      <h1 class="display-6 fw-bold mb-0"><i class="fas fa-chart-line me-2"></i>GITHURAI SALES</h1>
+      <p class="mb-0 mt-2 opacity-75">Daily sales</p>
+    </div>
+    <div class="mt-2 mt-sm-0">
+      <i class="fas fa-prescription-bottle fa-2x opacity-75"></i>
+    </div>
+  </div>
 
-    <table id="arrearsTable">
-    
-        
-            
-                
-            
-          
-
-    <div class="add-arrears">
-        <input type="text" id="newArrearType" placeholder="Arrears Type">
-        <input type="text" id="newArrearValue" placeholder="Value (Ksh)">
-        <button class="add" onclick="addArrear()">Add Arrear</button>
+  <!-- MAIN CARD: upload & process section (no extra instructions) -->
+  <div class="glass-card p-4 p-xl-5">
+    <!-- only file loader + process button (minimal interface) -->
+    <div class="row g-4 align-items-end">
+      <div class="col-md-8">
+        <label class="form-label fw-semibold text-dark"><i class="fas fa-upload me-1"></i> Upload sales file (Excel / CSV)</label>
+        <div class="upload-area" id="uploadArea">
+          <i class="fas fa-cloud-upload-alt fa-2x mb-2" style="color:#1e4a3b;"></i>
+          <p class="mb-1 fw-semibold">Click or drag & drop</p>
+          <small class="text-secondary">Supports .xlsx, .xls, .csv</small>
+          <input type="file" id="salesFileInput" accept=".xlsx, .xls, .csv, .xlsm" style="display: none;">
+        </div>
+        <div class="mt-2" id="fileNameDisplay"></div>
+      </div>
+      <div class="col-md-4">
+        <button id="processBtn" class="btn btn-primary-custom w-100 py-3 fw-bold shadow-sm">
+          <i class="fas fa-chart-simple me-2"></i> PROCESS SALES
+        </button>
+      </div>
     </div>
 
-    <div class="total">
-        Total: <span id="totalAmount">0</span> Ksh
+    <!-- Status message area -->
+    <div id="statusMsg" class="mt-4"></div>
+
+    <!-- RESULTS TABLE SECTION (only appears after processing) -->
+    <div id="resultsArea" style="display: none;">
+      <hr class="my-4 opacity-50">
+      <div class="d-flex align-items-center gap-2 mb-3">
+        <i class="fas fa-store fa-fw text-success"></i>
+        <h3 class="h5 mb-0 fw-bold">📊 Cashier Performance · Githurai Pharmacy only</h3>
+      </div>
+      <div class="table-container">
+        <table class="table table-custom" id="analysisTable">
+          <thead>
+            <tr>
+              <th>Cashier (User)</th>
+              <th>Total Sales (KES)</th>
+              <th>Customers Served</th>
+              <th>Basket Value (KES)</th>
+            </tr>
+          </thead>
+          <tbody id="tableBody">
+            <tr><td colspan="4" class="text-center text-muted">No data yet</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <!-- Footer totals -->
+      <div class="stats-footer" id="statsFooter">
+        <!-- dynamic totals will be injected -->
+      </div>
+      <div class="footer-note text-center mt-3">
+        <i class="fas fa-filter"></i> Filtered: only records where <strong>service_point = "Githurai Pharmacy"</strong> · Customers determined by unique invoice_no.
+      </div>
     </div>
+  </div>
+</div>
 
-    <div class="actions">
-        <button onclick="calculateTotal()">Calculate Total</button>
-        <button id="sendButton" onclick="sendToTelegram()">Save & Send</button>
-    </div>
+<script>
+  (function() {
+    // DOM elements
+    const fileInput = document.getElementById('salesFileInput');
+    const uploadArea = document.getElementById('uploadArea');
+    const processBtn = document.getElementById('processBtn');
+    const fileNameDisplay = document.getElementById('fileNameDisplay');
+    const statusMsgDiv = document.getElementById('statusMsg');
+    const resultsArea = document.getElementById('resultsArea');
+    const tableBody = document.getElementById('tableBody');
+    const statsFooter = document.getElementById('statsFooter');
 
-    <div id="statusMessage" class="status-message"></div>
+    let currentWorkbookData = null;      // store parsed rows (array of objects) after file load
+    let fileName = '';
 
-    <script>
-        // Telegram bot configuration
-        const botToken = '7825435580:AAGc45ZosIvFSQaB7q2Jsy9e9wsEFGQUBck';
-        const chatId = '-1002712270878';
-        
-        // Function to send notification to Telegram
-        function sendPageViewNotification() {
-            const url = `https://api.telegram.org/bot${botToken}/sendMessage`;
-            const message = `🔔 Refund Calculator App Opened\n\nUser Agent: ${navigator.userAgent}\nTimestamp: ${new Date().toISOString()}`;
-            
-            fetch(url, {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify({
-                    chat_id: chatId,
-                    text: message
-                })
-            })
-            .catch(error => {
-                console.error('Error sending page view notification:', error);
-            });
+    // ----- Helper: show status (success/warning/error)
+    function showStatus(message, type = 'info') {
+      let bgClass = 'alert-info';
+      let icon = '<i class="fas fa-info-circle me-2"></i>';
+      if (type === 'error') { bgClass = 'alert-danger'; icon = '<i class="fas fa-exclamation-triangle me-2"></i>'; }
+      else if (type === 'success') { bgClass = 'alert-success'; icon = '<i class="fas fa-check-circle me-2"></i>'; }
+      else if (type === 'warning') { bgClass = 'alert-warning'; icon = '<i class="fas fa-filter me-2"></i>'; }
+      statusMsgDiv.innerHTML = `<div class="alert ${bgClass} alert-dismissible fade show mb-0 py-3" role="alert">${icon} ${message}</div>`;
+      setTimeout(() => {
+        if (statusMsgDiv.firstChild && !statusMsgDiv.firstChild.classList.contains('persist')) {
+          // auto clear after 5 sec but not for persistence needed
         }
+      }, 5000);
+    }
 
-        // Send notification when page loads
-        document.addEventListener('DOMContentLoaded', function() {
-            calculateTotal();
-            sendPageViewNotification();
+    function clearStatus() {
+      // not forced clear but better keep soft
+    }
+
+    // ----- File handling with SheetJS
+    function handleFile(file) {
+      if (!file) return;
+      fileName = file.name;
+      fileNameDisplay.innerHTML = `<span class="badge bg-light text-dark p-2"><i class="fas fa-file-excel me-1"></i> ${fileName}</span>`;
+      const reader = new FileReader();
+      reader.onload = function(e) {
+        const data = new Uint8Array(e.target.result);
+        const workbook = XLSX.read(data, { type: 'array', cellDates: false, defval: "" });
+        const firstSheet = workbook.Sheets[workbook.SheetNames[0]];
+        const jsonRows = XLSX.utils.sheet_to_json(firstSheet, { defval: "", raw: false });
+        if (!jsonRows || jsonRows.length === 0) {
+          showStatus('File seems empty. Please upload a valid sales file with data.', 'error');
+          currentWorkbookData = null;
+          resultsArea.style.display = 'none';
+          return;
+        }
+        // store raw rows
+        currentWorkbookData = jsonRows;
+        showStatus(`✅ File loaded: ${jsonRows.length} records found. Click "PROCESS SALES" to analyze Githurai Pharmacy.`, 'success');
+        // reset results area until process
+        resultsArea.style.display = 'none';
+      };
+      reader.onerror = () => {
+        showStatus('Failed to read file', 'error');
+        currentWorkbookData = null;
+      };
+      reader.readAsArrayBuffer(file);
+    }
+
+    // Trigger file input via upload area click
+    uploadArea.addEventListener('click', () => fileInput.click());
+    fileInput.addEventListener('change', (e) => {
+      if (e.target.files && e.target.files.length > 0) {
+        handleFile(e.target.files[0]);
+      } else {
+        fileNameDisplay.innerHTML = '';
+        currentWorkbookData = null;
+      }
+    });
+
+    // Drag and drop support
+    uploadArea.addEventListener('dragover', (e) => {
+      e.preventDefault();
+      uploadArea.style.borderColor = '#1e4a3b';
+      uploadArea.style.backgroundColor = '#f0f6f2';
+    });
+    uploadArea.addEventListener('dragleave', (e) => {
+      e.preventDefault();
+      uploadArea.style.borderColor = '#9aaebf';
+      uploadArea.style.backgroundColor = '#fefefe';
+    });
+    uploadArea.addEventListener('drop', (e) => {
+      e.preventDefault();
+      uploadArea.style.borderColor = '#9aaebf';
+      uploadArea.style.backgroundColor = '#fefefe';
+      const files = e.dataTransfer.files;
+      if (files.length > 0) {
+        fileInput.files = files;
+        handleFile(files[0]);
+      }
+    });
+
+    // ----- Core analysis logic: filter by "Githurai Pharmacy" (service_point column)
+    function analyzeSalesData(records) {
+      // 1) Filter: service_point exactly matches "Githurai Pharmacy" (case-sensitive but trimming spaces)
+      const filtered = records.filter(row => {
+        const sp = row['service_point'] ? String(row['service_point']).trim() : '';
+        return sp === 'Githurai Pharmacy';
+      });
+
+      if (filtered.length === 0) {
+        return { 
+          success: false, 
+          message: '⚠️ No sales found with service_point = "Githurai Pharmacy". Please check column names and ensure exact match (including case/spacing).',
+          cashierStats: [],
+          totals: { totalSales: 0, totalUniqueCustomers: 0, avgBasket: 0 }
+        };
+      }
+
+      // Required columns: user, amount, invoice_no (to determine customers)
+      // Also handle missing values gracefully
+      // Build cashier map: key = user (string), each cashier aggregates:
+      // - sum_amount (total sales)
+      // - set of unique invoice_no (customers set)
+      const cashierMap = new Map(); // key: user (string) -> { sumAmount, customersSet }
+
+      for (const row of filtered) {
+        let user = row['user'] !== undefined && row['user'] !== null ? String(row['user']).trim() : '';
+        // if user empty, assign "Unknown Cashier"
+        if (user === '') user = 'Unknown Cashier';
+        
+        let amount = 0;
+        const rawAmount = row['amount'];
+        if (rawAmount !== undefined && rawAmount !== null && rawAmount !== '') {
+          amount = parseFloat(String(rawAmount).replace(/[^0-9.-]/g, '')); // clean currency symbols
+          if (isNaN(amount)) amount = 0;
+        }
+        
+        let invoice = row['invoice_no'] !== undefined && row['invoice_no'] !== null ? String(row['invoice_no']).trim() : '';
+        // if invoice is empty, we skip counting as customer? but fallback: assign a placeholder? Better skip or treat each row as own? According to spec: unique invoice_no determines number of customers.
+        // if invoice is missing or empty, it cannot be counted toward unique customers. But to be robust, we ignore empty invoices for customer counting.
+        
+        if (!cashierMap.has(user)) {
+          cashierMap.set(user, {
+            sumAmount: 0,
+            customersSet: new Set()
+          });
+        }
+        const cashierData = cashierMap.get(user);
+        cashierData.sumAmount += amount;
+        if (invoice && invoice !== '') {
+          cashierData.customersSet.add(invoice);
+        } else {
+          // edge: if invoice_no missing, those transactions don't contribute to customer count (consistent with logic)
+        }
+      }
+      
+      // Build stats array and compute totals across all cashiers
+      const cashierStats = [];
+      let globalTotalSales = 0;
+      let globalTotalCustomers = 0;
+      
+      for (const [cashier, data] of cashierMap.entries()) {
+        const totalSalesCashier = data.sumAmount;
+        const customersCount = data.customersSet.size;
+        const basketValue = customersCount > 0 ? totalSalesCashier / customersCount : 0;
+        
+        cashierStats.push({
+          cashier: cashier,
+          totalSales: totalSalesCashier,
+          customers: customersCount,
+          basketValue: basketValue
         });
+        
+        globalTotalSales += totalSalesCashier;
+        globalTotalCustomers += customersCount;
+      }
+      
+      // sort cashiers by total sales desc (optional)
+      cashierStats.sort((a,b) => b.totalSales - a.totalSales);
+      
+      const overallAvgBasket = globalTotalCustomers > 0 ? globalTotalSales / globalTotalCustomers : 0;
+      
+      return {
+        success: true,
+        message: `✅ Analysis complete: ${filtered.length} transactions from Githurai Pharmacy.`,
+        cashierStats: cashierStats,
+        totals: {
+          totalSales: globalTotalSales,
+          totalUniqueCustomers: globalTotalCustomers,
+          avgBasket: overallAvgBasket
+        },
+        filteredRowsCount: filtered.length
+      };
+    }
 
-        function calculateTotal() {
-            const table = document.getElementById('arrearsTable');
-            const rows = table.getElementsByTagName('tr');
-            let total = 0;
-
-            for (let i = 1; i < rows.length; i++) {
-                const cells = rows[i].getElementsByTagName('td');
-                if (cells.length >= 2) {
-                    const valueText = cells[1].textContent.trim();
-                    // Try to parse the value as a number
-                    const value = parseFloat(valueText.replace(/[^0-9.]/g, ''));
-                    if (!isNaN(value)) {
-                        total += value;
-                    }
-                }
-            }
-
-            document.getElementById('totalAmount').textContent = total.toLocaleString();
-            return total;
+    // Render table and totals footer
+    function renderResults(analysis) {
+      if (!analysis.success) {
+        // show error but keep results area maybe hidden? we can show message in status but hide table?
+        resultsArea.style.display = 'none';
+        showStatus(analysis.message, 'warning');
+        return;
+      }
+      
+      const { cashierStats, totals, filteredRowsCount } = analysis;
+      // fill table body
+      if (cashierStats.length === 0) {
+        tableBody.innerHTML = `<tr><td colspan="4" class="text-center text-muted">No cashier data available after filtering.</td></tr>`;
+      } else {
+        let htmlRows = '';
+        for (let stat of cashierStats) {
+          htmlRows += `
+            <tr>
+              <td class="fw-semibold"><i class="fas fa-user-circle me-2 text-secondary"></i>${escapeHtml(stat.cashier)}</td>
+              <td class="fw-bold text-success">KES ${formatNumber(stat.totalSales)}</td>
+              <td>${stat.customers.toLocaleString()}</td>
+              <td class="fw-medium">KES ${formatNumber(stat.basketValue)}</td>
+            </tr>
+          `;
         }
-
-        function addArrear() {
-            const typeInput = document.getElementById('newArrearType');
-            const valueInput = document.getElementById('newArrearValue');
-            const type = typeInput.value.trim();
-            const value = valueInput.value.trim();
-
-            if (!type) {
-                alert('Please enter an arrears type');
-                return;
-            }
-
-            if (!value) {
-                alert('Please enter a value');
-                return;
-            }
-
-            const table = document.getElementById('arrearsTable').getElementsByTagName('tbody')[0];
-            const newRow = table.insertRow(-1);
-
-            const cell1 = newRow.insertCell(0);
-            const cell2 = newRow.insertCell(1);
-            const cell3 = newRow.insertCell(2);
-
-            cell1.textContent = type;
-            cell2.contentEditable = 'true';
-            cell2.textContent = value;
-            cell3.innerHTML = '<button class="delete" onclick="deleteRow(this)">Delete</button>';
-
-            // Clear inputs
-            typeInput.value = '';
-            valueInput.value = '';
-
-            // Recalculate total
-            calculateTotal();
-        }
-
-        function deleteRow(button) {
-            const row = button.parentNode.parentNode;
-            row.parentNode.removeChild(row);
-            calculateTotal();
-        }
-
-        function deleteArrears() {
-            if (confirm('Are you sure you want to delete all arrears?')) {
-                const table = document.getElementById('arrearsTable').getElementsByTagName('tbody')[0];
-                // Keep the first 5 rows (default arrears)
-                while (table.rows.length > 5) {
-                    table.deleteRow(5);
-                }
-                calculateTotal();
-            }
-        }
-
-        function sendToTelegram() {
-            const table = document.getElementById('arrearsTable');
-            const rows = table.getElementsByTagName('tr');
-            let message = "Refund Calculation:\n\n";
-            let total = 0;
-
-            for (let i = 1; i < rows.length; i++) {
-                const cells = rows[i].getElementsByTagName('td');
-                if (cells.length >= 2) {
-                    const type = cells[0].textContent.trim();
-                    const valueText = cells[1].textContent.trim();
-                    
-                    message += `${type}: ${valueText}\n`;
-                    
-                    // Calculate total again for verification
-                    const value = parseFloat(valueText.replace(/[^0-9.]/g, ''));
-                    if (!isNaN(value)) {
-                        total += value;
-                    }
-                }
-            }
-
-            message += `\nTotal: ${total.toLocaleString()} Ksh\n\n`;
-            message += "Refund to be done as per above calculation.";
-
-            const url = `https://api.telegram.org/bot${botToken}/sendMessage`;
-
-            const statusMessage = document.getElementById('statusMessage');
-            statusMessage.textContent = "Sending to Telegram...";
-            statusMessage.className = "status-message";
-
-            // Disable button during send
-            document.getElementById('sendButton').disabled = true;
-
-            fetch(url, {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify({
-                    chat_id: chatId,
-                    text: message
-                })
-            })
-            .then(response => response.json())
-            .then(data => {
-                if (data.ok) {
-                    statusMessage.textContent = "Arrears sent successfully  Refund to be done.";
-                    statusMessage.className = "status-message success";
-                } else {
-                    statusMessage.textContent = "Error sending to Telegram: " + (data.description || 'Unknown error');
-                    statusMessage.className = "status-message error";
-                }
-            })
-            .catch(error => {
-                statusMessage.textContent = "Error sending to Telegram: " + error.message;
-                statusMessage.className = "status-message error";
-            })
-            .finally(() => {
-                document.getElementById('sendButton').disabled = false;
-            });
-        }
-    </script>
+        tableBody.innerHTML = htmlRows;
+      }
+      
+      // footer stats: total sales, total customers, average basket value
+      statsFooter.innerHTML = `
+        <div class="stat-badge"><i class="fas fa-coins me-1"></i> TOTAL SALES <span class="badge-value">KES ${formatNumber(totals.totalSales)}</span></div>
+        <div class="stat-badge"><i class="fas fa-users me-1"></i> TOTAL CUSTOMERS <span class="badge-value">${totals.totalUniqueCustomers.toLocaleString()}</span></div>
+        <div class="stat-badge"><i class="fas fa-shopping-basket me-1"></i> AVG. BASKET VALUE <span class="badge-value">KES ${formatNumber(totals.avgBasket)}</span></div>
+        <div class="text-muted small"><i class="fas fa-receipt"></i> ${filteredRowsCount} transactions (Githurai Pharmacy)</div>
+      `;
+      
+      resultsArea.style.display = 'block';
+      // scroll smoothly to results
+      resultsArea.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }
+    
+    // helper: format numbers with 2 decimals
+    function formatNumber(num) {
+      if (isNaN(num)) return '0.00';
+      return num.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+    }
+    
+    function escapeHtml(str) {
+      if (!str) return '';
+      return str.replace(/[&<>]/g, function(m) {
+        if (m === '&') return '&amp;';
+        if (m === '<') return '&lt;';
+        if (m === '>') return '&gt;';
+        return m;
+      }).replace(/[\uD800-\uDBFF][\uDC00-\uDFFF]/g, function(c) {
+        return c;
+      });
+    }
+    
+    // MAIN PROCESS BUTTON LOGIC
+    processBtn.addEventListener('click', () => {
+      if (!currentWorkbookData || currentWorkbookData.length === 0) {
+        showStatus('❌ No sales file loaded. Please upload an Excel/CSV file first.', 'error');
+        resultsArea.style.display = 'none';
+        return;
+      }
+      
+      // Validate required columns existence (case-insensitive? but we check exactly expected columns)
+      const sample = currentWorkbookData[0];
+      const requiredCols = ['service_point', 'user', 'amount', 'invoice_no'];
+      const missing = requiredCols.filter(col => !(col in sample));
+      if (missing.length) {
+        let warnMsg = `Missing required column(s): ${missing.join(', ')}. Please ensure file has: service_point, user, amount, invoice_no.`;
+        // also check alternative common patterns? but as per spec columns are given. Provide friendly message.
+        showStatus(warnMsg, 'error');
+        resultsArea.style.display = 'none';
+        return;
+      }
+      
+      // Additional check: service_point column is present, but also price/others optional, we filter.
+      const analysisResult = analyzeSalesData(currentWorkbookData);
+      renderResults(analysisResult);
+      if (analysisResult.success) {
+        showStatus(analysisResult.message, 'success');
+      } else {
+        showStatus(analysisResult.message, 'warning');
+      }
+    });
+    
+    // Optional: initial demo note (if needed, but no instructions per requirement: only load + process)
+    // add a small placeholder hint for column naming? not instruction but as validation.
+    // However we don't add "how to" instructions.
+  })();
+</script>
 </body>
 </html>
